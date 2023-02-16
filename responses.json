@@ -1,0 +1,54 @@
+{
+    "nameDecorators": [
+        "TT",
+        "Talked To",
+        "Spoke with",
+        "Chatted with",
+        "Connected with"
+    ],
+    "companyDecorators": [
+        "Working at",
+        "Employed at",
+        "Right now is with",
+        "Currently at"
+    ],
+    "scopeDecorators": [
+        "Doing",
+        "Focused on"
+    ],
+    "experienceDecorators": [
+        "Has around",
+        "overall about",
+        ""
+    ],
+    "toolsDecorators": [
+        "With a focus on",
+        "Primarily working with",
+        "Using"
+    ],
+    "interestDecorators": [
+        "Currently on the market",
+        "Actively looking for a new role",
+        "Open for opps",
+        "Searching for a new position",
+        "Wants a new opportunity"
+    ],
+    "payRateDecorators": [
+        "Looking for",
+        "Targeting",
+        "Asking for",
+        "Wants",
+        "Is expecting"
+    ],
+    "proceedingDecorators": [
+        "set up interview for",
+        "scheduling IOI for",
+        "meeting on",
+        "sending IKM for"
+    ],
+    "notProceedingDecorators": [
+        "NAF for current business, will KIM",
+        "Doesn't meet current reqs, will KIM",
+        "stay in touch for future opps"
+    ]
+}

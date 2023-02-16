@@ -1,60 +1,107 @@
 import random
-import nltk
 import tkinter as tk
-nltk.download('punkt')
+import json
 
-from nltk.tokenize import sent_tokenize
+def generate_candidate_description(name, company, scope, experience, skills, interests, payrate, proceeding, time):
+
+    global nameDecorators
+    global companyDecorators
+    global scopeDecorators
+    global experienceDecorators
+    global toolsDecorators
+    global interestDecorators
+    global payrateDecorators
+    global proceedingDecorators
+    global notProceedingDecorators
 
 
-def generate_candidate_description(name, role, skills, experience, career_goal, payrate):
-    # Create a list of sentence templates with placeholders for the candidate's information
-    sentence_templates = [
-        "{} has been working as a {} for over {} years, and has honed their skills in {}.",
-        "With over {} years of experience as a {}, {} has developed a deep understanding of the field and an impressive set of skills, including {}.",
-        "{} is seeking a role as a {} where they can leverage their skills in {} to achieve their career goal of {}.",
-        "{} is an experienced {} with skills in {}, seeking a new opportunity to achieve their career goal of {}.",
-        "As a skilled {}, {} is well-versed in {} and is seeking a new opportunity to grow their career and earn a pay rate of {}."
-    ]
+    with open('responses.json', 'r') as inputFile:
+        inputFile.seek(0)
+        inputData = inputFile.read()
 
-    # Shuffle the order of the sentence templatesgit
-    random.shuffle(sentence_templates)
+    data = json.loads(inputData)
 
-    # Select a random variation for each of the candidate's information fields
-    name_variation = random.choice(["This candidate", "The candidate", "They"])
-    role_variation = random.choice(["a software engineer", "an IT specialist", "a data analyst"])
-    skills_variation = random.choice(["Python, Java, and C#", "JavaScript and SQL", "C++, PHP, and Ruby"])
-    experience_variation = random.choice([f"{experience} years of experience", f"over {experience + 2} years of experience", f"{experience - 1} years of relevant experience"])
-    career_goal_variation = random.choice([f"to become a lead {role}", f"to work on innovative projects and collaborate with a team", f"to specialize in a new area of technology"])
-    payrate_variation = random.choice([f"${payrate}", f"${int(payrate) - 10000} - ${int(payrate) + 10000}", f"a competitive salary based on their skills and experience"])
+    description = ""
 
-    # Use the selected variations to fill in the sentence templates
-    sentences = [template.format(name_variation, role_variation, experience_variation, skills_variation, career_goal_variation, payrate_variation) for template in sentence_templates]
+    nameDecorators = data[nameDecorators]
 
-    # Join the sentences into a paragraph
-    description = " ".join(sentences)
+    description += random.choice(nameDecorators) + " " + name + ". "
 
-    # Use NLTK to tokenize the paragraph into sentences and reassemble them in a more natural-sounding order
-    tokenized_sentences = sent_tokenize(description)
-    random.shuffle(tokenized_sentences)
-    description = " ".join(tokenized_sentences)
+    randomMiddle = []
+    randomMiddle.append(random.choice(data[companyDecorators]) + " " + company + ". " )
+    randomMiddle.append(random.choice(data[scopeDecorators]) + " " + scope + ". " )
+    randomMiddle.append(random.choice(data[experienceDecorators]) + " " + experience + " years of experience" + ". " )
+    randomMiddle.append(random.choice(data[toolsDecorators]) + " " + skills + ". " )
+    randomMiddle.append(random.choice(data[interestDecorators]) + " " + interests + ". " )
+    randomMiddle.append(random.choice(data[payrateDecorators]) + " " + payrate + "$/hr" + ". " )
+
+    random.shuffle(randomMiddle)
+
+    for new in randomMiddle:
+        description += new
+
+    if proceeding:
+        description += random.choice(data[proceedingDecorators]) + " " + time + "."
+    else:
+        description += random.choice(data[notProceedingDecorators]) + "."
 
     # Return the final paragraph description
     return description
 
 
 def generate_description():
-    name = name_entry.get()
-    role = role_entry.get()
-    skills = skills_entry.get()
-    experience = int(experience_entry.get())
-    career_goal = career_goal_entry.get()
-    payrate = int(payrate_entry.get())
+    global isOn
 
-    description = generate_candidate_description(name, role, skills, experience, career_goal, payrate)
+    name = name_entry.get()
+    company = company_entry.get()
+    scope = scope_entry.get()
+    experience = experience_entry.get()
+    skills = skills_entry.get()
+    interests = interests_entry.get()
+    payrate = payrate_entry.get()
+    proceeding = isOn
+    time = ""
+    if isOn:
+        time = time_entry.get()
+
+    description = generate_candidate_description(name, company, scope, experience, skills, interests, payrate, proceeding, time)
 
     # Update the text in the output label
     output_label.config(text=description)
+    generate_button.config(text="Regenerate")
 
+def switch():
+    global isOn
+    global time_label
+    global time_entry
+
+    if isOn:
+        isOn = False
+        time_label.pack_forget()
+        time_entry.pack_forget()
+        proceed_entry.config(text="No")
+    else:
+        isOn = True
+        time_label = tk.Label(root, text="Proceed Time")
+        time_entry = tk.Entry(root)
+        time_label.pack()
+        time_entry.pack()
+        generate_button.pack()
+        output_label.pack()
+        proceed_entry.config(text="Yes")
+
+
+# Decorator name variables
+nameDecorators = "nameDecorators"
+companyDecorators = "companyDecorators"
+scopeDecorators = "scopeDecorators"
+experienceDecorators = "experienceDecorators"
+toolsDecorators = "toolsDecorators"
+interestDecorators = "interestDecorators"
+payrateDecorators = "payRateDecorators"
+proceedingDecorators = "proceedingDecorators"
+notProceedingDecorators = "notProceedingDecorators"
+isOn = True
 
 # Create a new tkinter window
 root = tk.Tk()
@@ -64,20 +111,29 @@ root.title("Candidate Description Generator")
 name_label = tk.Label(root, text="Candidate Name:")
 name_entry = tk.Entry(root)
 
-role_label = tk.Label(root, text="Current Role:")
-role_entry = tk.Entry(root)
+company_label = tk.Label(root, text="Company Name:")
+company_entry = tk.Entry(root)
 
-skills_label = tk.Label(root, text="Skills:")
-skills_entry = tk.Entry(root)
+scope_label = tk.Label(root, text="Scope:")
+scope_entry = tk.Entry(root)
 
 experience_label = tk.Label(root, text="Experience (years):")
 experience_entry = tk.Entry(root)
 
-career_goal_label = tk.Label(root, text="Career Goal:")
-career_goal_entry = tk.Entry(root)
+skills_label = tk.Label(root, text="Skills:")
+skills_entry = tk.Entry(root)
+
+interests_label = tk.Label(root, text="Interested in:")
+interests_entry = tk.Entry(root)
 
 payrate_label = tk.Label(root, text="Desired Payrate ($/hr):")
 payrate_entry = tk.Entry(root)
+
+proceed_label = tk.Label(root, text="Proceeding?")
+proceed_entry = tk.Button(root, text="Yes", bd=0, command=switch, height=5, width=10)
+
+time_label = tk.Label(root, text="Proceed Time")
+time_entry = tk.Entry(root)
 # Create the output label
 
 output_label = tk.Label(root, text="")
@@ -88,16 +144,22 @@ generate_button = tk.Button(root, text="Generate Description", command=generate_
 
 name_label.pack()
 name_entry.pack()
-role_label.pack()
-role_entry.pack()
-skills_label.pack()
-skills_entry.pack()
+company_label.pack()
+company_entry.pack()
+scope_label.pack()
+scope_entry.pack()
 experience_label.pack()
 experience_entry.pack()
-career_goal_label.pack()
-career_goal_entry.pack()
+skills_label.pack()
+skills_entry.pack()
+interests_label.pack()
+interests_entry.pack()
 payrate_label.pack()
 payrate_entry.pack()
+proceed_label.pack()
+proceed_entry.pack()
+time_label.pack()
+time_entry.pack()
 # Add the generate button and output label to the window
 
 generate_button.pack()
